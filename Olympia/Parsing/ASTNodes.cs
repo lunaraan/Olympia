@@ -11,11 +11,27 @@
     {
         Int,
         Float,
+        Identifier,
         InvalidNodeType
     }
-    internal abstract class StatementNode { }
+
+    internal enum ClassMemberType
+    {
+        FieldAssignmentStatement,
+        MethodDeclaration
+    }
+
+    internal abstract class StatementNode(NodeType type)
+    {
+        public readonly NodeType Type = type;
+    }
 
     internal abstract class ValueNode { }
+
+    internal interface IClassMember
+    {
+        public ClassMemberType GetMemberType();
+    }
 
     internal class IntLiteralNode(int value) : ValueNode
     {
@@ -32,14 +48,18 @@
         public readonly string Identifier = identifier;
     }
 
-    internal class AssignmentStatementNode(NodeType type, string identifier, ValueNode valueNode) : StatementNode
+    internal class ReturnStatementNode(NodeType type, ValueNode valueNode) : StatementNode(type)
     {
-        public readonly NodeType Type = type;
+        public readonly ValueNode ValueNode = valueNode;
+    }
+
+    internal class AssignmentStatementNode(NodeType type, string identifier, ValueNode valueNode) : StatementNode(type)
+    {
         public readonly string Identifier = identifier;
         public readonly ValueNode Value = valueNode;
     }
 
-    internal class FieldAssignmentStatementNode(AccessModifier accessModifier, AssignmentStatementNode assignmentStatement) : StatementNode
+    internal class FieldAssignmentStatementNode(AccessModifier accessModifier, AssignmentStatementNode assignmentStatement) : StatementNode(assignmentStatement.Type)
     {
         public readonly AccessModifier Access = accessModifier;
         public readonly AssignmentStatementNode Assignment = assignmentStatement;

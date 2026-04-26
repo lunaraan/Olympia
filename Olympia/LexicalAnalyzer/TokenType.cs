@@ -6,14 +6,11 @@
         IntLiteral,
         FloatLiteral,
 
-        /* Reserved Keywords */
-        Int,
-        Float,
+        /* Reserved */
         Class,
-
-        /* Access Modifiers */
-        Public,
-        Private,
+        Return,
+        DataType,
+        AccessModifier,
 
         /* Operators */
         OperatorEquals,
@@ -22,7 +19,8 @@
         Semicolon,
         OpenParen,
         CloseParen,
-        OpenBracket,
-        CloseBracket
+        OpenBrace,
+        CloseBrace,
+        Comma
     }
 }

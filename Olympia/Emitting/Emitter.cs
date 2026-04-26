@@ -10,8 +10,9 @@ namespace Olympia.Emitting
             StringBuilder strBuilder = new();
             strBuilder.AppendLine("""
                                   --[[
-                                  This file was compiled using Olympia.
-                                  Olympia is currently in beta v0.1;
+                                  Olympia version: Beta 0.1
+                                  
+                                  File was compiled using Olympia.
                                   --]]
                                   
                                   """);
@@ -47,6 +48,34 @@ namespace Olympia.Emitting
 
             strBuilder.AppendLine($"    return self");
             strBuilder.AppendLine("end");
+
+            foreach (MethodDeclarationNode method in classDeclaration.ClassBody.Methods)
+            {
+                strBuilder.Append($"function {classDeclaration.Identifier}:{method.Identifier}(");
+
+                int i = 0;
+                foreach (ParameterNode parameter in method.Parameters.Parameters)
+                {
+                    if (i >= method.Parameters.Parameters.Count - 1)
+                    {
+                        strBuilder.Append($"{parameter.Identifier}");
+                    }
+                    else
+                    {
+                        strBuilder.Append($"{parameter.Identifier}, ");
+                    }
+                    i++;
+                }
+
+                strBuilder.AppendLine(")");
+
+                foreach (StatementNode statement in method.Statements)
+                {
+                    //strBuilder.AppendLine($"    {statement}");
+                }
+
+                strBuilder.AppendLine("end");
+            }
 
             strBuilder.AppendLine($"return {classDeclaration.Identifier}");
             return strBuilder.ToString();

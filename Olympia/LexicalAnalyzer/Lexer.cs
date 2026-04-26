@@ -15,7 +15,7 @@ namespace Olympia.LexicalAnalyzer
             strBuilder.Append(consumed);
             int peeked = reader.Peek();
 
-            while (IsValidPeek(peeked) && char.IsAsciiLetter((char)peeked))
+            while (IsValidPeek(peeked) && char.IsAsciiLetterOrDigit((char)peeked))
             {
                 consumed = (char)reader.Read();
                 strBuilder.Append(consumed);
@@ -31,7 +31,7 @@ namespace Olympia.LexicalAnalyzer
             strBuilder.Append(consumed);
             int peeked = reader.Peek();
 
-            while (IsValidPeek(peeked) && (char.IsDigit((char)peeked) || (char)peeked == '.'))
+            while (IsValidPeek(peeked) && (char.IsDigit((char)peeked) || (char)peeked == '.' || (char)peeked == '_'))
             {
                 consumed = (char)reader.Read();
                 strBuilder.Append(consumed);
@@ -70,10 +70,13 @@ namespace Olympia.LexicalAnalyzer
                         tokens.Add(new Token(consumedStr, TokenType.Semicolon));
                         break;
                     case '{':
-                        tokens.Add(new Token(consumedStr, TokenType.OpenBracket));
+                        tokens.Add(new Token(consumedStr, TokenType.OpenBrace));
                         break;
                     case '}':
-                        tokens.Add(new Token(consumedStr, TokenType.CloseBracket));
+                        tokens.Add(new Token(consumedStr, TokenType.CloseBrace));
+                        break;
+                    case ',':
+                        tokens.Add(new Token(consumedStr, TokenType.Comma));
                         break;
                     default:
                         if (char.IsDigit(consumed))
@@ -88,20 +91,17 @@ namespace Olympia.LexicalAnalyzer
                         string word = GetWord(consumed, reader);
                         switch (word)
                         {
-                            case "int":
-                                tokens.Add(new Token(word, TokenType.Int));
+                            case "int" or "float" or "void":
+                                tokens.Add(new Token(word, TokenType.DataType));
                                 break;
-                            case "float":
-                                tokens.Add(new Token(word, TokenType.Float));
+                            case "return":
+                                tokens.Add(new Token(word, TokenType.Return));
                                 break;
                             case "class":
                                 tokens.Add(new Token(word, TokenType.Class));
                                 break;
-                            case "private":
-                                tokens.Add(new Token(word, TokenType.Private));
-                                break;
-                            case "public":
-                                tokens.Add(new Token(word, TokenType.Public));
+                            case "public" or "private":
+                                tokens.Add(new Token(word, TokenType.AccessModifier));
                                 break;
                             default:
                                 tokens.Add(new Token(word, TokenType.Identifier));
@@ -113,8 +113,6 @@ namespace Olympia.LexicalAnalyzer
 
                 peeked = reader.Peek();
             }
-
-            reader.Close();
 
             return tokens;
         }

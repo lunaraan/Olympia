@@ -64,13 +64,22 @@ namespace Olympia
                 return;
             }
 
-            StreamReader reader = new(filename);
+            using StreamReader reader = new(filename);
+
             List<Token> tokens = Lexer.Tokenize(reader);
+
+            //foreach (Token token in tokens)
+            //{
+            //    Console.WriteLine(token);
+            //}
+
             ProgramNode program = Parser.Parse(tokens);
 
-            PrintAST(program);
+            //PrintAST(program);
 
             Emitter.EmitLuau(program);
+
+            Console.WriteLine("Successfully compiled!");
         }
     }
 }
